@@ -1,0 +1,66 @@
+#!/bin/bash
+
+cd /home/vlad/dev/web/dj/d/designhubz/project/designhubz/
+
+. ~/.venvs/designhubz/bin/activate
+
+if [ "$1" == "init" ]
+then
+clear
+
+python manage.py pgcreatelocal
+python manage.py initproject
+python manage.py makemigrations
+python manage.py makemigrations web
+python manage.py makemigrations project
+python manage.py makemigrations file
+python manage.py makemigrations chat
+python manage.py migrate
+
+python manage.py createemails
+python manage.py createsuperuser
+python manage.py createtestusers
+python manage.py createtestprojects
+
+elif [ "$1" == "migr" ]
+then
+clear
+python manage.py makemigrations
+python manage.py migrate
+
+elif [ "$1" == "celery" ]
+then
+clear
+export DJANGO_SETTINGS_MODULE=designhubz.settings.development
+celery worker -A designhubz -l info -B
+
+elif [ "$1" == "pgupload" ]
+then
+clear
+
+pg_dump -U udesignhubz designhubz -f db.dump --format=c
+python manage.py pgdropremote
+python manage.py pgcreateremote
+pg_restore -h 46.101.140.193 -p 5432 -d designhubz -U udesignhubz db.dump
+
+
+elif [ "$1" == "pgdownload" ]
+then
+clear
+python manage.py pgdroplocal
+python manage.py pgcreatelocal
+python manage.py pgdownload
+
+
+
+elif [ "$1" == "test" ]
+then
+clear
+py.test -s designhubz/tests/test_auth.py
+# py.test -s designhubz/tests/test_facebook.py
+# py.test -s designhubz/tests/test_users.py
+
+else
+clear
+python manage.py runserver localhost:8000
+fi

@@ -1,0 +1,14 @@
+*.pyc
+*.~
+.cache/
+__pycache__/
+db.dump
+
+designhubz/celerybeat-schedule
+designhubz/designhubz/settings/data.json
+designhubz/db.dump
+designhubz/web/migrations/
+designhubz/chat/migrations/
+designhubz/file/migrations/
+designhubz/project/migrations/
+static/media/
